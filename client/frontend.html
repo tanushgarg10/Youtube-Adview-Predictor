@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Youtube Adview Forecast</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="https://lh3.googleusercontent.com/drive-viewer/AKGpihYtDzl2o5E8bUd0ibDjp2wLlMTR5jdiQaPZ1C9OkDBem6CfUp_6i-c-_5JYwrSBzV_VrIXEGNv-WtofublSSAglf5XDQX30K2U=s1600-rw-v1" alt="logo" width="150" height="50">
+        </div>
+        <div class="divider"></div>
+        <h1 class="heading">Youtube Adview Forecast</h1>
+
+    <form id="adview-form" onsubmit="onClickedPredict(event)">
+        <label for="views">Views:</label>
+        <input type="number" id="views" name="views">
+        
+        <label for="likes">Likes:</label>
+        <input type="number" id="likes" name="likes">
+        
+        <label for="dislikes">Dislikes:</label>
+        <input type="number" id="dislikes" name="dislikes">
+        
+        <label for="comments">Comments:</label>
+        <input type="number" id="comments" name="comments">
+        <label for="duration">Duration:</label>
+        <input type="text" id="duration" name="duration">
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category">
+        
+
+    
+        <button class="submit" type="submit">Predict Adview</button>
+    </form>
+    
+    <div id="adview" class="result">
+        <h2></h2>
+    </div>
+
+    <script>
+        async function onClickedPredict(event) {
+            event.preventDefault();
+            console.log("Predict Adview Clicked");
+
+            var views = document.getElementById("views").value;
+            var likes = document.getElementById("likes").value;
+            var dislikes = document.getElementById("dislikes").value;
+            var comments = document.getElementById("comments").value;
+            var category = document.getElementById("category").value;
+            var duration = document.getElementById("duration").value;
+
+            // Get the form data
+            const data = {
+                views: parseInt(views),
+                likes: parseInt(likes),
+                dislikes: parseInt(dislikes),
+                comment: parseInt(comments),
+                category: category,
+                duration: parseInt(duration)
+            };
+
+            console.log("Form data:", data);
+
+            try {
+                // Send a POST request to the server
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log("Response data:", responseData);
+
+                    // Get the element where the prediction will be displayed
+                    const adviewElement = document.getElementById("adview");
+
+                    // Display the prediction in the element
+                    adviewElement.innerHTML = `<h2>Predicted Adview: ${responseData.prediction}</h2>`;
+                } else {
+                    console.error('Error:', response.statusText);
+                    const errorText = await response.text();
+                    console.error('Error details:', errorText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
